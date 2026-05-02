@@ -3,6 +3,7 @@ name = "cigar_collapser"
 description = "A program that collapses CIGAR strings from SAM/BAM files into shorter human-readable string"
 version = "1.0.0"
 edition = "2024"
+license = "GPL-3.0-only"
 repository = "https://github.com/masikol/cigar_collapser"
 keywords = ["bioinformatics", "SAM", "BAM", "CIGAR"]
 categories = ["command-line-utilities", "science::bioinformatics::genomics", "science::bioinformatics::sequence-analysis"]
