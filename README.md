@@ -14,23 +14,23 @@ It might useful when inspecting long reads (e.g. Oxford nanopore, PacBio), whose
 
 ## Installation
 
-### Download a pre-built binary from GitHub
+### Way 1. Download a pre-built binary from GitHub
 
 Releases binaries are here: [https://github.com/masikol/cigar_collapser/releases](https://github.com/masikol/cigar_collapser/releases).
 
-### Install using Cargo
+### Way 2. Install using Cargo
 
 ```bash
 cargo install cigar_collapser
 ```
 
-Here you can find out how to install Cargo: [https://github.com/masikol/cigar_collapser/](https://github.com/masikol/cigar_collapser/).
+Here you can find out how to install Cargo: [https://doc.rust-lang.org/cargo/getting-started/installation.html](https://doc.rust-lang.org/cargo/getting-started/installation.html).
 
-### Build from source
+### Way 3. Build from source
 
 1. Download a release source code from [https://github.com/masikol/cigar_collapser/releases](https://github.com/masikol/cigar_collapser/releases).
 
-2. Unpack the archive: `tar -xvf repeat_collapser_v1.0.0.tar.gz` or `unzip repeat_collapser_v1.0.0.tar.gz`.
+2. Unpack the downloaded archive, say `repeat_collapser_v1.0.0.tar.gz`.
 
 3. Then test it and compile with Cargo:
 
