@@ -14,7 +14,7 @@ It might useful when inspecting long reads (e.g. Oxford nanopore, PacBio), whose
 
 ## Installation
 
-### Way 1. Download a pre-built binary from GitHub
+### Way 1. Download a pre-built binary for Linux from GitHub
 
 Releases binaries are here: [https://github.com/masikol/cigar_collapser/releases](https://github.com/masikol/cigar_collapser/releases).
 
