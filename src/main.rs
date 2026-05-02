@@ -1,4 +1,3 @@
-
 use std::env;
 use std::process::ExitCode;
 use std::io::{self, BufRead};
@@ -15,16 +14,13 @@ enum Mode {
 fn main() -> ExitCode {
     let mode = detect_mode();
     let exit_code = match mode {
-        Mode::Args => {
-            run_args_mode()
-        }
-        Mode::Stdin => {
-            run_stdin_mode()
-        }
+        Mode::Args => run_args_mode(),
+        Mode::Stdin => run_stdin_mode(),
     };
 
     exit_code
 }
+
 
 fn detect_mode() -> Mode {
     match env::args().nth(1) {
@@ -39,25 +35,25 @@ fn detect_mode() -> Mode {
 
 
 fn run_args_mode() -> ExitCode {
-    let mut work_args = env::args(); 
+    let mut work_args = env::args();
     work_args.next(); // pass slement 0
 
     for arg in work_args {
         match collapse_cigar(&arg) {
             Ok(ok_str) => {
                 println!("{}", ok_str);
-            },
+            }
             Err(err_str) => {
                 eprintln!("{}", err_str);
                 return ExitCode::FAILURE;
-            },
+            }
         }
     }
 
     ExitCode::SUCCESS
 }
 
-fn run_stdin_mode() -> ExitCode  {
+fn run_stdin_mode() -> ExitCode {
     let reader = io::stdin().lock();
 
     for line_result in reader.lines() {
@@ -74,11 +70,11 @@ fn run_stdin_mode() -> ExitCode  {
         match collapse_cigar(&line) {
             Ok(ok_str) => {
                 println!("{}", ok_str);
-            },
+            }
             Err(err_str) => {
                 eprintln!("{}", err_str);
                 return ExitCode::FAILURE;
-            },
+            }
         }
     }
 

@@ -1,6 +1,37 @@
+//! # cigar_collapser
+//!
+//! `cigar_collapser` is a simple program that collapses CIGAR strings
+//! from SAM/BAM files making the string concise, human-readable
+//! and easy to see which part of the read is actually aligned and which is clipped.
+//!
+//! For example, `123S10M10I5D333H` becomes `          123-S|             20|          333-H`.
+//!
+//! It might be useful when inspecting long reads (e.g. Oxford nanopore, PacBio),
+//! whose CIGAR strings are often very long too.
+//!
+//! Please see the details on GitHub:
+//! [https://github.com/masikol/cigar_collapser](https://github.com/masikol/cigar_collapser).
+
 
 // >>> Lib functions >>>
 
+/// Collapses a CIGAR string into a concise and human-readable string.
+///
+/// # Examples
+///
+/// ```
+/// use cigar_collapser::collapse_cigar;
+///
+/// let cigar_str = String::from(
+///     "123S10M10I5D333H"
+/// );
+/// let collapsed_str = collapse_cigar(&cigar_str).unwrap();
+///
+/// assert_eq!(
+///     collapsed_str,
+///     String::from("          123-S|             20|          333-H")
+/// );
+/// ```
 pub fn collapse_cigar(str_arg: &String) -> Result<String, String> {
     let mut q_len:          u32 = 0;
     let mut left_clip_len:  u32 = 0;
@@ -39,15 +70,13 @@ pub fn collapse_cigar(str_arg: &String) -> Result<String, String> {
         }
     }
 
-    Ok(
-        format_collapsed_cigar(
+    Ok(format_collapsed_cigar(
             q_len,
             left_clip_len,
             right_clip_len,
             left_clip_char,
             right_clip_char
-        )
-    )
+    ))
 }
 
 fn calc_operation_len(char_vec: &Vec<char>) -> Result<u32, String> {
@@ -63,7 +92,6 @@ fn calc_operation_len(char_vec: &Vec<char>) -> Result<u32, String> {
     )
 }
 
-// TODO: test
 fn format_collapsed_cigar(q_len: u32,
                           left_clip_len: u32,
                           right_clip_len: u32,
@@ -75,23 +103,19 @@ fn format_collapsed_cigar(q_len: u32,
 
     let mut left_clip_len_str = String::from(".");
     if left_clip_char != '\0' {
-        left_clip_len_str = String::from(
-            format!(
-                "{}-{}",
-                format_number(left_clip_len),
-                left_clip_char
-            )
-        );
+        left_clip_len_str = String::from(format!(
+            "{}-{}",
+            format_number(left_clip_len),
+            left_clip_char
+        ));
     }
     let mut right_clip_len_str = String::from(".");
     if right_clip_char != '\0' {
-        right_clip_len_str = String::from(
-            format!(
-                "{}-{}",
-                format_number(right_clip_len),
-                right_clip_char
-            )
-        );
+        right_clip_len_str = String::from(format!(
+            "{}-{}",
+            format_number(right_clip_len),
+            right_clip_char
+        ));
     }
 
     format!(
@@ -108,7 +132,7 @@ fn format_number(n: u32) -> String {
     let mut result = Vec::new();
 
     for (i, &c) in bytes.iter().rev().enumerate() {
-        if i != 0 && (i+1)%3 == 1 {
+        if i!=0 && (i+1)%3 == 1 {
             result.push(b',');
         }
         result.push(c);
@@ -125,7 +149,7 @@ fn format_number(n: u32) -> String {
 
 #[cfg(test)]
 mod test_calc_len {
-    use super::{calc_operation_len};
+    use super::calc_operation_len;
 
     #[test]
     fn test_calc_len_ok() {
@@ -156,7 +180,7 @@ mod test_calc_len {
 
 #[cfg(test)]
 mod test_collapse_cigar {
-    use super::{collapse_cigar};
+    use super::collapse_cigar;
 
     #[test]
     fn test_cigar_ok_with_clips() {
@@ -295,6 +319,47 @@ mod test_format_number {
         let left = format_number(num);
         let right = String::from("3,222,111");
         assert_eq!(left, right);
+    }
+}
+
+
+#[cfg(test)]
+mod test_format_collapsed_cigar {
+    use super::format_collapsed_cigar;
+
+    #[test]
+    fn test_format_both_clips() {
+        let result = format_collapsed_cigar(70, 1234, 333, 'S', 'H');
+        let expected = String::from("        1,234-S|             70|          333-H");
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn test_format_left_clip_only() {
+        let result = format_collapsed_cigar(70, 1234, 0, 'S', '\0');
+        let expected = String::from("        1,234-S|             70|              .");
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn test_format_right_clip_only() {
+        let result = format_collapsed_cigar(70, 0, 333, '\0', 'H');
+        let expected = String::from("              .|             70|          333-H");
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn test_format_no_clips() {
+        let result = format_collapsed_cigar(70, 0, 0, '\0', '\0');
+        let expected = String::from("              .|             70|              .");
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn test_format_large_numbers() {
+        let result = format_collapsed_cigar(3222111, 1234, 5678, 'S', 'H');
+        let expected = String::from("        1,234-S|      3,222,111|        5,678-H");
+        assert_eq!(result, expected);
     }
 }
 
